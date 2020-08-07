@@ -14,6 +14,12 @@ def create_user(email, password):
 
     return user
 
+def get_all_users():
+    return db.session.query(User).all()
+
+def get_user_by_id(id_num):
+    return db.session.query(User).get(id_num)
+
 
 def create_movie(title, overview, release_date, poster_path):
     """Create and return a new movie."""
@@ -24,6 +30,18 @@ def create_movie(title, overview, release_date, poster_path):
     db.session.commit()
 
     return movie
+
+
+def get_all_movies():
+    return db.session.query(Movie).all()
+
+
+def get_movie_by_id(id_num):
+    return Movie.query.get(id_num)
+    # Could also do:
+    #return db.session.query(Movie).fitler_by(movie_id=id_num).one()
+
+
 
 def create_rating(score, movie, user):
     """Create and return a new rating."""
