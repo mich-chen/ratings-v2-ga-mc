@@ -52,6 +52,30 @@ for movie in movie_data:
     all_movies_in_db.append(db_movie)
 
 
+# Generating 10 random users, and for each user
+# generating 10 random ratings. We will be getting a random
+# movie by picking from the all_movies_in_db list.
+# looping over 10 times for 10 users
+for n in range(10):
+    # Creating a unique email for each user
+    email = f'user{n}@test.com'  # Voila! A unique email!
+    password = 'test'
+
+    # create a user here
+    user = crud.create_user(email=email, password=password)
+
+    # create 10 ratings for the user
+    for i in range(10):
+        # pick random movie and score
+        random_movie = choice(all_movies_in_db)
+        random_score = randint(1,5)
+
+        # Create our new rating from these random things
+        rating = crud.create_rating(score=random_score, 
+                                movie=random_movie,
+                                user=user)
+
+
 
 
 
