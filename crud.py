@@ -20,6 +20,9 @@ def get_all_users():
 def get_user_by_id(id_num):
     return db.session.query(User).get(id_num)
 
+def get_user_by_email(email):
+    return db.session.query(User).filter_by(email=email).first()
+
 
 def create_movie(title, overview, release_date, poster_path):
     """Create and return a new movie."""

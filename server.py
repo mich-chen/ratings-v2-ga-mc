@@ -34,15 +34,53 @@ def show_movie_details(movie_id):
     return render_template("movie_details.html", movie=movie)
 
 
-@app.route('/users')
+@app.route('/users', methods=['GET'])
 def show_all_users():
     all_users = crud.get_all_users()
     return render_template('all_users.html', users=all_users)
+
+
+@app.route('/users', methods=['POST'])
+def process_account_form():
+    email = request.form.get('email')
+    password = request.form.get('password')
+
+    user = crud.get_user_by_email(email)
+
+    if user:
+        flash('You cannot create an account with that email. Try again.')
+    else:
+        crud.create_user(email=email, password=password)
+        flash('Account created successfully!')
+
+    return redirect('/')
+
 
 @app.route('/users/<user_id>')
 def show_user_profile(user_id):
     user = crud.get_user_by_id(user_id)
     return render_template("user_profile.html", user=user)
+
+
+@app.route('/login', methods=['POST'])
+def process_login():
+    email = request.form.get('email')
+    password = request.form.get('password')
+
+    user = crud.get_user_by_email(email)
+
+    if password == user.password:
+        session['user_id']= user.user_id
+        flash('Logged in!')
+    else:
+        
+        flash('Incorrect password or email. Try again.')
+
+    return redirect('/')
+
+
+
+
 
 
 if __name__ == '__main__':
