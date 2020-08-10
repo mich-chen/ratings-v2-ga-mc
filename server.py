@@ -2,6 +2,7 @@
 
 from flask import (Flask, render_template, request, flash,
                     session, redirect)
+from flask_debugtoolbar import DebugToolbarExtension
 
 # Importing from files we've made
 from model import connect_to_db
@@ -69,13 +70,22 @@ def process_login():
 
     user = crud.get_user_by_email(email)
 
-    if password == user.password:
+    if user and password == user.password:
         session['user_id']= user.user_id
         flash('Logged in!')
     else:
         
         flash('Incorrect password or email. Try again.')
 
+    return redirect('/')
+        
+
+
+@app.route('/logout')
+def process_logout():
+    # Deletes user from session to log them out
+    del session['user_id']
+    
     return redirect('/')
 
 
@@ -85,5 +95,7 @@ def process_login():
 
 if __name__ == '__main__':
     # Connect to db first, then app can access it.
+    app.debug = True
     connect_to_db(app)
-    app.run(host='0.0.0.0', debug=True)
+    DebugToolbarExtension(app)
+    app.run(host='0.0.0.0')
