@@ -22,17 +22,34 @@ def show_homepage():
     return render_template('homepage.html')
 
 
-@app.route('/movies')
-def show_all_movies():
-    """Show all movies in database"""
-    all_movies = crud.get_all_movies()
-    return render_template("all_movies.html", movies=all_movies)
+@app.route('/movies', methods=['GET', 'POST'])
+def handle_all_movies():
+    """Show all movies in database or create a movie"""
+    if request.method == 'GET':
+        all_movies = crud.get_all_movies()
+        return render_template("all_movies.html", movies=all_movies)
+
+    elif request.method == 'POST':
+        title = request.form.get('title')
+        overview = request.form.get('overview')
+        release_date = request.form.get('release_date')
+        poster_path = request.form.get('poster_path')
+        crud.create_movie(title=title, overview=overview, release_date=release_date, poster_path=poster_path)
+        all_movies = crud.get_all_movies()
+        return render_template("all_movies.html", movies=all_movies)
 
 
-@app.route('/movies/<movie_id>')
-def show_movie_details(movie_id):
-    movie = crud.get_movie_by_id(movie_id)
-    return render_template("movie_details.html", movie=movie)
+@app.route('/movies/<movie_id>', methods=['GET', 'PUT', 'DELETE'])
+def handle_single_movie(movie_id):
+    if request.method == 'GET':
+        movie = crud.get_movie_by_id(movie_id)
+        return render_template("movie_details.html", movie=movie)
+
+    elif request.method == 'PUT':
+        # TODO: add CRUD function to update movie (if want)
+
+    elif request.method == 'DELETE':
+        # TODO: add CRUD function to delete movie (if want feature)
 
 @app.route('/users', methods=['GET', 'POST'])
 def handle_users():
@@ -66,7 +83,6 @@ def handle_single_user(user_id):
         # TODO: add CRUD function to delete user
         # crud.delete_user(user_id)
 
-
 @app.route('/login', methods=['POST'])
 def process_login():
     email = request.form.get('email')
@@ -85,7 +101,7 @@ def process_login():
         
 
 
-@app.route('/logout')
+@app.route('/logout', methods=['DELETE'])
 def process_logout():
     # Deletes user from session to log them out
     del session['user_id']
