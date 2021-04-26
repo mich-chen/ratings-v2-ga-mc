@@ -33,7 +33,7 @@ Running Flask options:
 Author: Michelle Chen
 """
 
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session, Blueprint
 
 # set up flask app
 app = Flask(__name__)
@@ -51,3 +51,24 @@ def catch_all(path):
 def homepage():
     """Render homepage."""
     return render_template('homepage.html')
+
+# Blueprint(blueprint name, Blueprint's import name (used to locate blueprint's resources))
+movies_page = Blueprint()
+
+@app.route('/users', methods=['GET', 'POST'])
+def handle_users():
+    if request.method == 'GET':
+        all_users = crud.get_all_user()
+        return render_template('all_users.html', users=all_users)
+
+    elif request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        user = crud.get_user_by_email(email)
+
+        if user:
+            flash('You cannot create an account with that email. Try again.')
+        else:
+            crud.create_user(email=email, password=password)
+            flash('Account created successfully!')
+        return redirect('/')
