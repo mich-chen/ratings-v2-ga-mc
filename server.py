@@ -52,10 +52,19 @@ def handle_users():
             flash('Account created successfully!')
         return redirect('/')
 
-@app.route('/users/<user_id>')
-def show_user_profile(user_id):
-    user = crud.get_user_by_id(user_id)
-    return render_template("user_profile.html", user=user)
+@app.route('/users/<user_id>', methods=['GET', 'PUT', 'DELETE'])
+def handle_single_user(user_id):
+    if request.method == 'GET':
+        user = crud.get_user_by_id(user_id)
+        return render_template("user_profile.html", user=user)
+    
+    elif request.method == 'PUT':
+        # TODO: add CRUD function to update/modify user details
+        # crud.update_user(user_id)
+    
+    elif request.method == 'DELETE':
+        # TODO: add CRUD function to delete user
+        # crud.delete_user(user_id)
 
 
 @app.route('/login', methods=['POST'])
